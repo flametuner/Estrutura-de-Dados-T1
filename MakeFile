@@ -1,0 +1,1 @@
+g++ -o ed -std=c++11 main.cpp linked_list.cpp linked_list.h linked_queue.cpp linked_queue.h track_queue.cpp track_queue.h vehicle.h vehicle.cpp semaphore.h
