@@ -15,6 +15,7 @@ int runtime = 60 * 60 * 24;
 int ticks = 0;
 
 // Generate vehicle
+// TODO Rever todos os new para ter um delete correspondente
 
 int main(int args, char* argv[]) {
 	using namespace std;
