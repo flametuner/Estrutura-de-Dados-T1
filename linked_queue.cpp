@@ -1,5 +1,6 @@
 #include "linked_queue.h"
 #include "linked_list.cpp"
+#include <stdexcept>
 
 template <typename T>
 void structures::LinkedQueue<T>::clear() {
@@ -35,7 +36,7 @@ T& structures::LinkedQueue<T>::back() const {
 }
 
 template <typename T>
-bool structures::LinkedQueue<T>::empty() const {	 	  	 	      	      	      	      	 	   	       	 	
+bool structures::LinkedQueue<T>::empty() const {
 	return structures::LinkedList<T>::empty();
 }
 

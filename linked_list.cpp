@@ -1,13 +1,6 @@
 #include "linked_list.h"
 
-template <typename T>
-structures::LinkedList<T>::LinkedList() {
-}
-
-template <typename T>
-structures::LinkedList<T>::~LinkedList() {
-  clear();
-}
+#include <stdexcept>
 
 template <typename T>
 void structures::LinkedList<T>::clear() {
@@ -22,7 +15,7 @@ void structures::LinkedList<T>::clear() {
 }
 
 template <typename T>
-void structures::LinkedList<T>::push_back(const T& data) {	 	  	 	      	      	      	      	 	   	       	 	
+void structures::LinkedList<T>::push_back(const T& data) {
   insert(data, size());
 }
 
@@ -58,7 +51,7 @@ void structures::LinkedList<T>::insert_sorted(const T& data) {
   if (!empty()) {
     auto it = head;
 		for(auto i = 1u; i <= size(); i++) {
-			if (data < it->data()) {	 	  	 	      	      	      	      	 	   	       	 	
+			if (data < it->data()) {
 					break;
 			}
       index++;
@@ -95,7 +88,7 @@ T structures::LinkedList<T>::pop(std::size_t index) {
       for (auto i = 1u; i <= index; ++i) {
           last = it;
           it = it->next();
-      }	 	  	 	      	      	      	      	 	   	       	 	
+      }
       last->next(it->next());
     }
     T object = it->data();
@@ -131,7 +124,7 @@ bool structures::LinkedList<T>::empty() const {
 }
 
 template <typename T>
-bool structures::LinkedList<T>::contains(const T& data) const {	 	  	 	      	      	      	      	 	   	       	 	
+bool structures::LinkedList<T>::contains(const T& data) const {
   return find(data) < size();
 }
 

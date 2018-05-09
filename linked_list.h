@@ -2,7 +2,6 @@
 #define STRUCTURES_LINKED_LIST_H
 
 #include <cstdint>
-#include <stdexcept>
 
 namespace structures {
 
@@ -10,8 +9,10 @@ namespace structures {
 template<typename T>
 class LinkedList {
  public:
-    LinkedList();
-    ~LinkedList();
+    LinkedList(){}
+    ~LinkedList() {
+        clear();
+    }
     /// Limpa a lista
     void clear();
     /// Insere no fim
@@ -19,13 +20,13 @@ class LinkedList {
     /// Insere no inicio
     void push_front(const T& data);
     /// Insere na posição
-    void insert(const T& data, std::size_t index);
+    virtual void insert(const T& data, std::size_t index);
     /// Insere em ordem
     void insert_sorted(const T& data);
     /// Acessa um elemento na posição index
     T& at(std::size_t index);
     /// Retira da posição
-    T pop(std::size_t index);
+    virtual T pop(std::size_t index);
     /// Retira do fim
     T pop_back();
     /// Retira do inicio
@@ -42,7 +43,7 @@ class LinkedList {
     std::size_t size() const;
 
  protected:
-    class Node {	 	  	 	      	      	      	      	 	   	       	 	
+    class Node {
      public:
         explicit Node(const T& data):
             data_{data}
@@ -78,7 +79,7 @@ class LinkedList {
         Node* next_{nullptr};
     };
 
-    Node* end() {	 	  	 	      	      	      	      	 	   	       	 	
+    Node* end() {
         auto it = head;
         for (auto i = 1u; i < size(); ++i) {
             it = it->next();

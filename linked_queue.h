@@ -1,8 +1,6 @@
 #ifndef STRUCTURES_LINKED_QUEUE_H
 #define STRUCTURES_LINKED_QUEUE_H
 
-#include <cstdint>
-#include <stdexcept>
 #include "linked_list.h"
 
 namespace structures {
@@ -11,6 +9,8 @@ namespace structures {
 template<typename T>
 class LinkedQueue : private LinkedList<T> {
  public:
+    LinkedQueue() {}
+    ~LinkedQueue() {}
     /// Limpa a fila
     void clear();
     /// Adiciona na fila
