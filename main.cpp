@@ -81,7 +81,7 @@ int main(int args, char* argv[]) {
 	int* northS1 = new int[3]{80, 10, 10};
 	int* eastS1 = new int[3]{30, 30, 40};
 	int* southS1 = new int[3]{10, 80, 10};
-	int* westS1 = new int[3]{10, 10, 80};
+	int* westS1 = new int[3]{10, 80, 10};
 
 	// Lista das pistas que se ligam no semaforo
 
@@ -92,7 +92,7 @@ int main(int args, char* argv[]) {
 	TrackQueue** saidas_sem2 = new TrackQueue*[4]{N2Norte, L1Leste, S2Sul, C1Oeste};
 
 	Semaphore* sem1 = new Semaphore(northS1, eastS1, southS1, westS1, entradas_sem1, saidas_sem1);
-	Semaphore* sem2 = new Semaphore(new int[3]{30, 40, 30}, new int[3]{40, 30, 30}, new int[3]{30, 40, 30}, new int[3]{30, 30, 40}, entradas_sem2, saidas_sem2);
+	Semaphore* sem2 = new Semaphore(new int[3]{40, 30, 30}, new int[3]{40, 30, 30}, new int[3]{30, 40, 30}, new int[3]{30, 40, 30}, entradas_sem2, saidas_sem2);
 
 	LinkedList<Semaphore*> semList;
 	semList.push_back(sem1);
