@@ -1,3 +1,5 @@
+// "Copyright 2018 Gustavo Inácio e Juliano Santos"
+
 #include <iostream>
 #include <stdlib.h>
 
