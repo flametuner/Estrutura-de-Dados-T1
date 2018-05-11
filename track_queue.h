@@ -30,6 +30,8 @@ class TrackQueue {
     bool hasSpace(float size) const;
     /// Size of vehicles
     std::size_t vehicles();
+    /// Carros que entraram nela, pra estatisticas
+    int carrosPassados();
     /// Velocidade
     float speed() const;
     /// Tamanho da fila
@@ -49,6 +51,7 @@ class TrackQueue {
     float speed_; // m/s
     float queueSize_; // tamanho maximo da via
     float lenght_; // tamanho atual da fila
+    int estatisticas_ = 0;
     Direcao semDirection_;
     Sem destino_;
     int generationMax_, generationMin_, nextGeneration; // detalhes de geração

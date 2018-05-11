@@ -27,6 +27,11 @@ structures::Vehicle* structures::TrackQueue::front() {
 
 void structures::TrackQueue::enqueue(structures::Vehicle* data) {
 	vehicles_->enqueue(data);
+	estatisticas_++;
+}
+
+int structures::TrackQueue::carrosPassados() {
+	return estatisticas_;
 }
 
 structures::Vehicle* structures::TrackQueue::dequeue(){

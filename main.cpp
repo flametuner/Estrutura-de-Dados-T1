@@ -100,6 +100,7 @@ int main(int args, char* argv[]) {
 	cout << "Inicio de simulação\n";
 
 	string names[] = {"NORTH", "EAST", "SOUTH", "WEST", "CLOSE"};
+	string names2[] = {"SEMAPHORE_1", "SEMAPHORE_2", "EXIT"};
 
 	while(running) {
 		// Tick
@@ -115,9 +116,7 @@ int main(int args, char* argv[]) {
 			bool shouldDequeue = false;
 			TrackQueue* queue = tracks->at(i);
 			// Loop em todos os carros
-			if (ticks > runtime) {
-				cout << "Track " << i << " - Queuesize " << queue->queueSize() << '\n';
-			}
+
 			for(int y = 0; y < queue->vehicles(); y++) {
 				Vehicle* v = queue->at(y);
 				// Checkagem se pode andar ou não
@@ -235,12 +234,6 @@ int main(int args, char* argv[]) {
 	for(int i = 0; i < semList.size(); i++) {
 		delete semList.at(i); // Delete semaforos
 	}
-
-	for(int i = 0; i < tracks->size(); i++) {
-		delete tracks->at(i); // Delete tracks
-	}
-
-	delete tracks; // delete array de pista
 	cout << "Fim de simulação\n";
 	cout << "Ticks rodados: " << (ticks - 1) << '\n';
 	cout << "Carros gerados: " << carrosGerados << '\n';
@@ -248,5 +241,13 @@ int main(int args, char* argv[]) {
 	cout << "Veiculos na pista no momento: " << vehiclesNasPistas << '\n';
 	cout << "Carros sumidos: " << carrosSumidos << '\n';
 	cout << "Trocas de pista: " << trocasDePista << '\n';
+	cout << "\nPista(n) [Direção, Destino] : Carros que passaram\n\n";
+	for(int i = 0; i < tracks->size(); i++) {
+		TrackQueue* queue = tracks->at(i);
+		cout << "Pista(" << i << ") [" << names[queue->semDirection()] << ", " << names2[queue->destino()]<< "]" << ": " << queue->carrosPassados() << '\n';
+		delete queue; // Delete tracks
+	}
+
+	delete tracks; // delete array de pista
 
 }
