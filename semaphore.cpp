@@ -16,6 +16,12 @@ Semaphore::Semaphore(int north[3], int south[3], int east[3], int west[3], Track
 }
 
 Semaphore::~Semaphore() {
+  delete[] probability_[Direcao::NORTH];
+  delete[] probability_[Direcao::SOUTH];
+  delete[] probability_[Direcao::EAST];
+  delete[] probability_[Direcao::WEST];
+  delete[] entradas_;
+  delete[] saidas_;
   delete[] probability_;
 }
 

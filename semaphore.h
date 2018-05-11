@@ -1,7 +1,7 @@
 #ifndef STRUCTURES_SEMAPHORE_H
 #define STRUCTURES_SEMAPHORE_H
 
-#define OPEN_TIME 40
+#define OPEN_TIME 45
 #include "track_queue.h"
 #include "direcao.h"
 

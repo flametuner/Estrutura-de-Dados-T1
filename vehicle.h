@@ -16,7 +16,7 @@ class Vehicle {
       :   size_{size},
           direction_{direction},
           distance_{distance} {}
-    ~Vehicle();
+          
     void move(float distance);
 
     void changeTrack(float distance, structures::Direcao direction);

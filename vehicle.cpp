@@ -1,9 +1,5 @@
 #include "vehicle.h"
-#include <iostream>
 
-structures::Vehicle::~Vehicle() {
-  std::cout << "Veiculo destruido\n";
-}
  structures::Vehicle* structures::generate_vehicle(float distance, structures::Direcao direction){
     Vehicle* v = new Vehicle(4 + ((float)rand()/(float)(RAND_MAX))*MAX_VEHICLE, direction, distance);
     return v;

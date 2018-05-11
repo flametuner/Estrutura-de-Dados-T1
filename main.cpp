@@ -1,21 +1,23 @@
 #include <iostream>
 #include <stdlib.h>
+
 #include "semaphore.h"
 #include "linked_list.h"
 #include "linked_queue.h"
+#include "direcao.h"
+
 #include "track_queue.cpp"
 #include "semaphore.cpp"
-#include "direcao.h"
-//#include "track_queue.cpp"
-
 #include "vehicle.cpp"
 
 bool running = true;
 int runtime = 60 * 60 * 24;
 int ticks = 0;
 
-// Generate vehicle
-// TODO Rever todos os new para ter um delete correspondente
+// Estatisticas
+int carrosGerados = 0, carrosSumidos = 0, trocasDePista = 0, carrosNaoGerados = 0, vehiclesNasPistas = 0;
+
+// TODO Ver para utilizar os dados do .txt
 
 int main(int args, char* argv[]) {
 	using namespace std;
@@ -33,7 +35,7 @@ int main(int args, char* argv[]) {
 	// Declarar as filas
 	// Declarar filas geradoras
 
- 	LinkedList<TrackQueue*>* tracks = new LinkedList<TrackQueue*>();
+ 	LinkedList<TrackQueue*>* tracks = new LinkedList<TrackQueue*>(); // delete no final do main
 
 	// Tracks geradoras
 	TrackQueue* N1Sul = new TrackQueue(60, 500, Sem::SEMAPHORE_1, Direcao::NORTH, 15, 25); // Semaforo 1
@@ -70,15 +72,9 @@ int main(int args, char* argv[]) {
 	tracks->push_back(L1Leste);
 	tracks->push_back(C1Oeste);
 	tracks->push_back(C1Leste);
+	// delete em todas no final com loop
 
-
-	//TrackQueue t = tracks->at(0);
-	//cout << "Comecando simulação\n";
-
-	// Declarar os semaforos
-	// Ver um jeito melhor de mandar os dados (txt)
-	// Criar dois semaforos com direção que fica aberto e tempo (ticks)
-	// Revisar esses dados para nova ordem
+	// delete dentro do semaforo
 	int* northS1 = new int[3]{80, 10, 10};
 	int* eastS1 = new int[3]{30, 30, 40};
 	int* southS1 = new int[3]{10, 80, 10};
@@ -86,18 +82,22 @@ int main(int args, char* argv[]) {
 
 	// Lista das pistas que se ligam no semaforo
 
-	TrackQueue** entradas_sem1 = new TrackQueue*[4]{N1Sul, C1Oeste, S1Norte, O1Leste};
-	TrackQueue** saidas_sem1 = new TrackQueue*[4]{N1Norte, C1Leste, S1Sul, O1Oeste};
+	//Array de Ponteiros para Semaforos
+	TrackQueue** entradas_sem1 = new TrackQueue*[4]{N1Sul, C1Oeste, S1Norte, O1Leste}; 	// delete dentro do semaforo
+	TrackQueue** saidas_sem1 = new TrackQueue*[4]{N1Norte, C1Leste, S1Sul, O1Oeste}; 	// delete dentro do semaforo
 
-	TrackQueue** entradas_sem2 = new TrackQueue*[4]{N2Sul, L1Oeste, S2Norte, C1Leste};
-	TrackQueue** saidas_sem2 = new TrackQueue*[4]{N2Norte, L1Leste, S2Sul, C1Oeste};
+	TrackQueue** entradas_sem2 = new TrackQueue*[4]{N2Sul, L1Oeste, S2Norte, C1Leste};	// delete dentro do semaforo
+	TrackQueue** saidas_sem2 = new TrackQueue*[4]{N2Norte, L1Leste, S2Sul, C1Oeste};	// delete dentro do semaforo
 
+	// Declarar os semaforos
 	Semaphore* sem1 = new Semaphore(northS1, eastS1, southS1, westS1, entradas_sem1, saidas_sem1);
 	Semaphore* sem2 = new Semaphore(new int[3]{40, 30, 30}, new int[3]{40, 30, 30}, new int[3]{30, 40, 30}, new int[3]{30, 40, 30}, entradas_sem2, saidas_sem2);
 
 	LinkedList<Semaphore*> semList;
 	semList.push_back(sem1);
 	semList.push_back(sem2);
+	// Delete no final do main em Loop
+	cout << "Inicio de simulação\n";
 
 	string names[] = {"NORTH", "EAST", "SOUTH", "WEST", "CLOSE"};
 
@@ -105,7 +105,6 @@ int main(int args, char* argv[]) {
 		// Tick
 		Direcao dirsem1 = sem1->direction();
 		// Ticks do semaforo
-		// Mudança de semaforo
 		sem1->tick();
 		sem2->tick();
 
@@ -116,21 +115,26 @@ int main(int args, char* argv[]) {
 			bool shouldDequeue = false;
 			TrackQueue* queue = tracks->at(i);
 			// Loop em todos os carros
-			//cout << "Track> " << i << '\n';
+			if (ticks > runtime) {
+				cout << "Track " << i << " - Queuesize " << queue->queueSize() << '\n';
+			}
 			for(int y = 0; y < queue->vehicles(); y++) {
 				Vehicle* v = queue->at(y);
-				// Colocar a checkagem se pode andar ou não
-				if(v == queue->front() && v->distance() <= queue->queueSize()) { // Primeiro da fila
+				// Checkagem se pode andar ou não
+
+				if(v->distance() == 0 && v->distance() <= queue->queueSize()) { // Primeiro da fila
 					if(queue->destino() == Sem::EXIT) { // Se for fila sumidoura, deve sair
-						shouldDequeue = true;
+						delete queue->dequeue(); // Delete de carro
+						carrosSumidos++;
+						vehiclesNasPistas--;
+						y--;
 					}
 					continue;
 				}
 				float distance = queue->speed() / 3.6;
-				//cout << distance << '\n';
-				//cout << "queuesize :" <<  queue->queueSize() << '\n';
-				if((v->distance() - distance) < queue->queueSize()){
-					if (v->distance() - distance - queue->queueSize() < 0 && v->distance() >= queue->queueSize())
+
+				if((v->distance() - distance) <= queue->queueSize()){
+					if (v->distance() > queue->queueSize())
 							distance = v->distance() - queue->queueSize();
 					else
 						distance = 0; // Só andar se tiver espaço livre
@@ -139,17 +143,14 @@ int main(int args, char* argv[]) {
 
 				// Há uma fila e precisa aumentar
 
-				if(v->distance() <= queue->queueSize()){
+				if(v->distance() <= queue->queueSize() && distance == 0){
 					queue->addQueue(v->size());
 				}
 			}
-			if(shouldDequeue) {
-				queue->dequeue();
-				cout << "Saiu pelo sumidouro nº " << i << '\n';
-			}
-			// Random gerador de carros (nao esquecer da checkagem se esta cheio)
+
+
 			// Se a track for uma track geradora, gerar
-			if(queue->canGenerateCar()) {
+			if(queue->canGenerateCar() && ticks < runtime) {
 				int* probability{nullptr};
 				if(queue->destino() == Sem::SEMAPHORE_1) {
 					probability = sem1->probability(queue->semDirection());
@@ -174,14 +175,16 @@ int main(int args, char* argv[]) {
 				}
 
 				Direcao dir = Direcao(choice);
-				Vehicle* v = generate_vehicle(queue->lenght(), dir);
+				Vehicle* v = generate_vehicle(queue->lenght(), dir); // Geração de carros
 
 				if(queue->hasSpace(v->size())) {
 					queue->enqueue(v);
-					cout << "Carro gerado e adicionado na pista nº " << i << '\n';
+					vehiclesNasPistas++;
+					carrosGerados++;
+				} else {
+					carrosNaoGerados++;
 				}
 			}
-			// cout << "veiculos na pista: " << queue->vehicles() << '\n';
 		}
 
 		for(int i = 0; i < semList.size(); i++) {
@@ -190,15 +193,12 @@ int main(int args, char* argv[]) {
 				TrackQueue* openTrack = sem->getOpenTrack();
 				if(openTrack->vehicles() <= 0)
 					continue;
-				//cout << "Veiculos na pista: [" << i << "][" << names[sem->direction()] << "] " << openTrack->vehicles() << '\n';
 				Vehicle* v = openTrack->front();
-				//cout << "Distancia do primeiro veiculo: " << v->distance() << '\n';
-				//cout << "Tamanho da fila: " << openTrack->queueSize() << '\n';
-				//cout << "Distancia do veiculo: " << v->distance() << '\n';
+
 				TrackQueue* destiny = sem->getExit(v->direction());
-				//cout << "dis: " << v->distance() << '\n';
 				if(v->distance() <= 0 && destiny->hasSpace(v->size())) {
-					//cout << "Mudança de pist\n";
+					trocasDePista++;
+					// Geração de novo destino
 					int* probability{nullptr};
 					if(openTrack->destino() == Sem::SEMAPHORE_1) {
 						probability = sem1->probability(openTrack->semDirection());
@@ -228,11 +228,25 @@ int main(int args, char* argv[]) {
 				}
 			}
 		}
-		//cout << "Tick nº:" << ticks << '\n';
 		if(++ticks > runtime)
 			running = false;
 	}
-	delete tracks;
+
+	for(int i = 0; i < semList.size(); i++) {
+		delete semList.at(i); // Delete semaforos
+	}
+
+	for(int i = 0; i < tracks->size(); i++) {
+		delete tracks->at(i); // Delete tracks
+	}
+
+	delete tracks; // delete array de pista
 	cout << "Fim de simulação\n";
+	cout << "Ticks rodados: " << (ticks - 1) << '\n';
+	cout << "Carros gerados: " << carrosGerados << '\n';
+	cout << "Carros nao gerados: " << carrosNaoGerados << '\n';
+	cout << "Veiculos na pista no momento: " << vehiclesNasPistas << '\n';
+	cout << "Carros sumidos: " << carrosSumidos << '\n';
+	cout << "Trocas de pista: " << trocasDePista << '\n';
 
 }
